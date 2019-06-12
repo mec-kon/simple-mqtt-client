@@ -49,10 +49,26 @@ private:
 
 public:
     /**
-     * @brief constructor
+     * @brief Mqtt constructor
      *
-     * This is the constructor of the mqtt class.
+     * constructor of the class when a login to the server is required.
      *
+     * @param id
+     * @param publish_topic null terminated string of the topic to publish to
+     * @param subscribe_topic the subscription pattern
+     * @param host the hostname or ip address of the broker to connect to
+     * @param port the network port to connect to (usually 1883)
+     * @param username username, if expected by the server
+     * @param password password, if expected by the server
+     */
+    Mqtt(string id, string publish_topic,vector<string> subscription_topic_list, string host, int port, string username, string password);
+
+    /**
+     * @brief Mqtt constructor
+     *
+     * constructor of the class when a login to the server is not required.
+     *
+     * @param id
      * @param publish_topic null terminated string of the topic to publish to
      * @param subscribe_topic the subscription pattern
      * @param host the hostname or ip address of the broker to connect to

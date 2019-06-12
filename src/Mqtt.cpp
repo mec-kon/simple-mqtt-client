@@ -1,5 +1,29 @@
 #include "Mqtt.h"
 
+Mqtt::Mqtt(string id, string publish_topic,vector<string> subscription_topic_list, string host, int port, string username, string password){
+
+    mosqpp::lib_init();
+    this->id = id;
+    this->keepalive = 60;
+    this->port = port;
+    this->host = host;
+    this->publish_topic = publish_topic;
+    this->subscription_topic_list = subscription_topic_list;
+
+    mosquittopp::username_pw_set(username.c_str(), password.c_str());
+
+
+    /*
+     * Connect to an MQTT broker. This is a non-blocking call. If you use mosquitto_connect_async your client must use
+     * the threaded interface mosquitto_loop_start.
+     */
+    connect_async(this->host.c_str(), this->port, this->keepalive);
+    loop_start();
+
+}
+
+
+
 Mqtt::Mqtt(string id, string publish_topic,vector<string> subscription_topic_list , string host, int port) : mosquittopp(id.c_str())
 {
     mosqpp::lib_init();
@@ -9,6 +33,8 @@ Mqtt::Mqtt(string id, string publish_topic,vector<string> subscription_topic_lis
     this->host = host;
     this->publish_topic = publish_topic;
     this->subscription_topic_list = subscription_topic_list;
+
+
 
     /*
      * Connect to an MQTT broker. This is a non-blocking call. If you use mosquitto_connect_async your client must use
@@ -43,14 +69,14 @@ bool Mqtt::publish(string message)
      * false: set to true to make the message retained.
      *
      */
-    int answer = mosqpp::mosquittopp::publish(NULL, publish_topic.c_str(), message.length(), message.c_str(), 1, false);
+    int answer = mosqpp::mosquittopp::publish(nullptr, publish_topic.c_str(), message.length(), message.c_str(), 1, false);
     return (answer == MOSQ_ERR_SUCCESS);
 }
 
 bool Mqtt::subscribe() {
     bool success = true;
     for(int i=0; i<subscription_topic_list.size(); i++){
-        int answer = mosquittopp::subscribe(NULL, subscription_topic_list[i].c_str());
+        int answer = mosquittopp::subscribe(nullptr, subscription_topic_list[i].c_str());
         if(answer != MOSQ_ERR_SUCCESS){
             success = false;
         }
